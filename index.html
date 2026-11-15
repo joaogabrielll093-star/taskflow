@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#101116">
-<title>TaskFlow v1.3.2</title>
+<title>TaskFlow v1.3.3</title>
 <style>
 :root{--bg:#101116;--card:#191b23;--line:#2b2e39;--text:#f4f5f8;--muted:#9297a6;--accent:#9b8cff;--green:#61d6a7;--red:#ff777e;--orange:#ffbd69}
 *{box-sizing:border-box}
@@ -106,7 +106,7 @@ nav span{display:block;font-size:19px;margin-bottom:3px}
 </div>
 
 <div id="tasks"></div>
-<div class="note">TaskFlow v1.3.2 &#x2022; Build 132 &#x2022; Seus dados ficam salvos neste aparelho.<br>Os lembretes funcionam enquanto o aplicativo estiver ativo.</div>
+<div class="note">TaskFlow v1.3.3 &#x2022; Build 133 &#x2022; Seus dados ficam salvos neste aparelho.<br>Os lembretes funcionam enquanto o aplicativo estiver ativo.</div>
 </div>
 
 <nav>
@@ -141,6 +141,16 @@ nav span{display:block;font-size:19px;margin-bottom:3px}
 </form>
 </dialog>
 
+<dialog id="importModal">
+<form id="importForm" onsubmit="event.preventDefault();importTasks()">
+<div class="modalhead"><h3>Importar tarefas</h3><button type="button" class="close" onclick="$('importModal').close()">&#xD7;</button></div>
+<p class="muted" style="font-size:12px;line-height:1.5">Cole o JSON recebido do ChatGPT. Aceita uma tarefa ou uma lista de tarefas.</p>
+<label for="importData">Dados das tarefas (JSON)</label>
+<textarea id="importData" required style="min-height:150px" placeholder='{"title":"Reuniao com cliente","category":"work","priority":"high","due":"2026-11-16","reminder":"10:00"}'></textarea>
+<div class="actions"><button type="button" onclick="$('importModal').close()">Cancelar</button><button class="save" type="submit">Importar agora</button></div>
+</form>
+</dialog>
+
 <script>
 const $=id=>document.getElementById(id);
 let tasks=JSON.parse(localStorage.getItem('taskflow')||'[]');
@@ -151,8 +161,11 @@ let snoozed=JSON.parse(localStorage.getItem('taskflow_snoozed')||'{}');
 
 
 function openImport(){
-  $('importData').value='';
-  $('importModal').showModal();
+  const dialog=$('importModal');
+  const field=$('importData');
+  if(!dialog || !field){ alert('A janela de importacao nao foi carregada. Atualize o TaskFlow.'); return; }
+  field.value='';
+  dialog.showModal();
 }
 function importTasks(){
   try{
@@ -379,3 +392,4 @@ window.addEventListener('focus',checkReminders);
 </script>
 </body>
 </html>
+
