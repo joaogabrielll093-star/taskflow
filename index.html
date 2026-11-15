@@ -1,0 +1,252 @@
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#101116">
+<title>TaskFlow</title>
+<style>
+:root{--bg:#101116;--card:#191b23;--line:#2b2e39;--text:#f4f5f8;--muted:#9297a6;--accent:#9b8cff;--green:#61d6a7;--red:#ff777e}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;padding:22px 17px 100px}
+.app{max-width:650px;margin:auto}
+header{display:flex;align-items:center;gap:12px;margin-bottom:30px}
+.logo{background:linear-gradient(135deg,#a394ff,#6653d9);width:43px;height:43px;border-radius:14px;display:grid;place-items:center;font-size:23px;font-weight:bold}
+header h1{margin:0;font-size:22px}
+header small,.muted{color:var(--muted)}
+.welcome h2{font-size:27px;margin:0 0 7px}
+.welcome p{color:var(--muted);margin:0}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:24px 0}
+.stat{background:var(--card);border:1px solid var(--line);padding:14px;border-radius:15px}
+.stat strong{font-size:25px;display:block;margin:8px 0}
+.stat small{color:var(--muted)}
+.section{display:flex;justify-content:space-between;align-items:center;margin:25px 0 13px}
+button{cursor:pointer;font:inherit}
+.add{background:var(--accent);color:#171322;border:0;border-radius:11px;padding:11px 14px;font-weight:bold}
+.filters{display:flex;gap:8px;overflow:auto;margin-bottom:14px}
+.filter{background:var(--card);border:1px solid var(--line);color:var(--muted);border-radius:30px;padding:9px 13px;white-space:nowrap;font-size:12px}
+.filter.active{background:#302b4d;color:white;border-color:var(--accent)}
+.task{display:flex;align-items:flex-start;gap:12px;background:var(--card);border:1px solid var(--line);padding:15px;border-radius:14px;margin-bottom:9px}
+.check{width:21px;height:21px;flex:none;border:1px solid #777;border-radius:7px;background:none;color:#111}
+.task.done .check{background:var(--green);border-color:var(--green)}
+.task.done .taskname{text-decoration:line-through;color:var(--muted)}
+.taskbody{flex:1;min-width:0}
+.taskname{font-weight:650;overflow-wrap:anywhere}
+.meta{font-size:11px;color:var(--muted);margin-top:8px;display:flex;gap:9px;flex-wrap:wrap}
+.high{color:var(--red)}.medium{color:#ffbd69}.low{color:var(--green)}
+.delete{border:0;background:none;color:var(--muted);font-size:18px}
+.empty{text-align:center;padding:35px 12px;background:var(--card);border:1px dashed var(--line);border-radius:15px;color:var(--muted)}
+dialog{background:var(--card);color:var(--text);border:1px solid var(--line);border-radius:19px;width:92%;max-width:460px;padding:20px}
+dialog::backdrop{background:#000b}
+.modalhead{display:flex;justify-content:space-between;align-items:center}
+.modalhead h3{margin:0}
+.close{background:none;border:0;color:white;font-size:24px}
+label{display:block;color:var(--muted);font-size:12px;margin:14px 0 6px}
+input,select,textarea{width:100%;padding:12px;background:#11131a;border:1px solid var(--line);border-radius:10px;color:white;font:inherit}
+textarea{min-height:65px}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.actions{display:flex;gap:9px;margin-top:20px}
+.actions button{flex:1;padding:12px;border-radius:10px;border:1px solid var(--line);background:#242632;color:white}
+.actions .save{background:var(--accent);color:#171322;border:0;font-weight:bold}
+nav{position:fixed;bottom:0;left:0;right:0;background:#171820;border-top:1px solid var(--line);display:flex;justify-content:space-around;padding:13px 5px calc(13px + env(safe-area-inset-bottom))}
+nav button{background:none;border:0;color:var(--muted);font-size:11px}
+nav button.active{color:var(--accent)}
+nav span{display:block;font-size:19px;margin-bottom:3px}
+</style>
+</head>
+<body>
+<div class="app">
+<header>
+<div class="logo">T</div>
+<div><h1>TaskFlow</h1><small>ORGANIZE. PRIORIZE. REALIZE.</small></div>
+</header>
+
+<section class="welcome">
+<h2>Vamos organizar o dia.</h2>
+<p>Um passo de cada vez. Você consegue.</p>
+</section>
+
+<section class="stats">
+<div class="stat"><small>Total</small><strong id="total">0</strong><small>Tarefas</small></div>
+<div class="stat"><small>Concluídas</small><strong id="done">0</strong><small>Finalizadas</small></div>
+<div class="stat"><small>Pendentes</small><strong id="pending">0</strong><small>Em aberto</small></div>
+</section>
+
+<div class="section">
+<h3 id="heading">Minhas tarefas</h3>
+<button class="add" onclick="newTask()">＋ Nova</button>
+</div>
+
+<div class="filters">
+<button class="filter active" data-filter="all">Todas</button>
+<button class="filter" data-filter="today">Hoje</button>
+<button class="filter" data-filter="pending">Pendentes</button>
+<button class="filter" data-filter="done">Concluídas</button>
+<button class="filter" data-filter="personal">Pessoal</button>
+<button class="filter" data-filter="work">Trabalho</button>
+</div>
+
+<div id="tasks"></div>
+<p class="muted" style="text-align:center;font-size:11px;margin-top:25px">TaskFlow • Seus dados ficam salvos neste aparelho.</p>
+</div>
+
+<nav>
+<button class="active" data-nav="all"><span>▦</span>Início</button>
+<button data-nav="today"><span>◷</span>Hoje</button>
+<button data-nav="personal"><span>♡</span>Pessoal</button>
+<button data-nav="work"><span>▣</span>Trabalho</button>
+</nav>
+
+<dialog id="modal">
+<form id="form">
+<div class="modalhead"><h3 id="modalTitle">Nova tarefa</h3><button type="button" class="close" onclick="modal.close()">×</button></div>
+<input type="hidden" id="id">
+<label>Nome da tarefa *</label>
+<input id="title" required maxlength="100" placeholder="O que precisa ser feito?">
+<label>Descrição</label>
+<textarea id="description" placeholder="Detalhes da atividade..."></textarea>
+<div class="grid">
+<div><label>Categoria</label>
+<select id="category"><option value="personal">Pessoal</option><option value="work">Profissional</option></select></div>
+<div><label>Prioridade</label>
+<select id="priority"><option value="low">Baixa</option><option value="medium" selected>Média</option><option value="high">Alta</option></select></div>
+</div>
+<div class="grid">
+<div><label>Data do prazo</label><input type="date" id="due"></div>
+<div><label>Horário do lembrete</label><input type="time" id="reminder"></div>
+</div>
+<div class="actions">
+<button type="button" onclick="modal.close()">Cancelar</button>
+<button class="save" type="submit">Salvar tarefa</button>
+</div>
+</form>
+</dialog>
+
+<script>
+const $=id=>document.getElementById(id);
+let tasks=JSON.parse(localStorage.getItem('taskflow')||'[]');
+let filter='all';
+
+function save(){
+ localStorage.setItem('taskflow',JSON.stringify(tasks));
+ render();
+}
+function newTask(){
+ $('form').reset();
+ $('id').value='';
+ $('modalTitle').textContent='Nova tarefa';
+ $('modal').showModal();
+}
+function editTask(id){
+ const t=tasks.find(x=>x.id===id);
+ if(!t)return;
+ $('id').value=t.id;
+ $('title').value=t.title;
+ $('description').value=t.description||'';
+ $('category').value=t.category;
+ $('priority').value=t.priority;
+ $('due').value=t.due||'';
+ $('reminder').value=t.reminder||'';
+ $('modalTitle').textContent='Editar tarefa';
+ $('modal').showModal();
+}
+$('form').onsubmit=e=>{
+ e.preventDefault();
+ const id=$('id').value;
+ const old=tasks.find(t=>t.id===id);
+ const item={
+ id:id||Date.now().toString(),
+ title:$('title').value.trim(),
+ description:$('description').value.trim(),
+ category:$('category').value,
+ priority:$('priority').value,
+ due:$('due').value,
+ reminder:$('reminder').value,
+ done:old?old.done:false
+ };
+ if(old)tasks=tasks.map(t=>t.id===id?item:t);
+ else tasks.push(item);
+ $('modal').close();
+ save();
+};
+function render(){
+ $('total').textContent=tasks.length;
+ $('done').textContent=tasks.filter(t=>t.done).length;
+ $('pending').textContent=tasks.filter(t=>!t.done).length;
+ const names={all:'Minhas tarefas',today:'Tarefas de hoje',pending:'Pendentes',done:'Concluídas',personal:'Vida pessoal',work:'Profissional'};
+ $('heading').textContent=names[filter];
+ let list=tasks.filter(t=>{
+ if(filter==='today')return t.due===new Date().toISOString().slice(0,10)&&!t.done;
+ if(filter==='pending')return !t.done;
+ if(filter==='done')return t.done;
+ if(filter==='personal'||filter==='work')return t.category===filter;
+ return true;
+ });
+ list.sort((a,b)=>(a.done-b.done)||(a.due||'9999').localeCompare(b.due||'9999'));
+ $('tasks').innerHTML='';
+ if(!list.length){
+ $('tasks').innerHTML='<div class="empty">Nenhuma tarefa por aqui.<br><br>Toque em + Nova para começar.</div>';
+ return;
+ }
+ list.forEach(t=>{
+ const el=document.createElement('div');
+ el.className='task'+(t.done?' done':'');
+ const check=document.createElement('button');
+ check.className='check';
+ check.textContent=t.done?'✓':'';
+ check.onclick=()=>{t.done=!t.done;save()};
+ const body=document.createElement('div');
+ body.className='taskbody';
+ const name=document.createElement('div');
+ name.className='taskname';
+ name.textContent=t.title;
+ const meta=document.createElement('div');
+ meta.className='meta';
+ const cat=document.createElement('span');
+ cat.textContent=t.category==='work'?'Profissional':'Pessoal';
+ const pri=document.createElement('span');
+ pri.className=t.priority;
+ pri.textContent={high:'Alta prioridade',medium:'Média prioridade',low:'Baixa prioridade'}[t.priority];
+ meta.append(cat,pri);
+ if(t.due){
+ const date=document.createElement('span');
+ date.textContent='Prazo: '+new Date(t.due+'T00:00:00').toLocaleDateString('pt-BR');
+ meta.append(date);
+ }
+ if(t.reminder){
+ const time=document.createElement('span');
+ time.textContent='Lembrete: '+t.reminder;
+ meta.append(time);
+ }
+ if(t.description){
+ const desc=document.createElement('p');
+ desc.className='muted';
+ desc.textContent=t.description;
+ body.append(name,desc,meta);
+ }else body.append(name,meta);
+ body.onclick=()=>editTask(t.id);
+ const del=document.createElement('button');
+ del.className='delete';
+ del.textContent='×';
+ del.onclick=()=>{if(confirm('Excluir esta tarefa?')){tasks=tasks.filter(x=>x.id!==t.id);save()}};
+ el.append(check,body,del);
+ $('tasks').append(el);
+ });
+}
+document.querySelectorAll('[data-filter]').forEach(b=>b.onclick=()=>{
+ filter=b.dataset.filter;
+ document.querySelectorAll('.filter').forEach(x=>x.classList.toggle('active',x===b));
+ document.querySelectorAll('[data-nav]').forEach(x=>x.classList.toggle('active',x.dataset.nav===filter));
+ render();
+});
+document.querySelectorAll('[data-nav]').forEach(b=>b.onclick=()=>{
+ filter=b.dataset.nav;
+ document.querySelectorAll('.filter').forEach(x=>x.classList.toggle('active',x.dataset.filter===filter));
+ document.querySelectorAll('[data-nav]').forEach(x=>x.classList.toggle('active',x===b));
+ render();
+});
+render();
+</script>
+</body>
+</html>
