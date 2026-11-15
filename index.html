@@ -4,13 +4,13 @@
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#101116">
 <title>TaskFlow v1.3</title>
 <style>
 :root{--bg:#101116;--card:#191b23;--line:#2b2e39;--text:#f4f5f8;--muted:#9297a6;--accent:#9b8cff;--green:#61d6a7;--red:#ff777e;--orange:#ffbd69}
 *{box-sizing:border-box}
-body{margin:0;background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;padding:22px 17px 105px}
+body{margin:0;background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;padding:calc(22px + env(safe-area-inset-top)) 17px 105px}
 .app{max-width:650px;margin:auto}
 header{display:flex;align-items:center;gap:12px;margin-bottom:30px}
 .logo{background:linear-gradient(135deg,#a394ff,#6653d9);width:43px;height:43px;border-radius:14px;display:grid;place-items:center;font-size:23px;font-weight:bold}
@@ -75,18 +75,18 @@ nav span{display:block;font-size:19px;margin-bottom:3px}
 
 <section class="welcome">
 <h2>Vamos organizar o dia.</h2>
-<p id="greeting">Um passo de cada vez. VocÃª consegue.</p>
+<p id="greeting">Um passo de cada vez. Voc&#xEA; consegue.</p>
 </section>
 
 <section class="stats">
 <div class="stat"><small>Total</small><strong id="total">0</strong><small>Tarefas cadastradas</small></div>
-<div class="stat"><small>ConcluÃ­das</small><strong id="done">0</strong><small>Finalizadas</small></div>
+<div class="stat"><small>Conclu&#xED;das</small><strong id="done">0</strong><small>Finalizadas</small></div>
 <div class="stat"><small>Pendentes</small><strong id="pending">0</strong><small>Em aberto</small></div>
 <div class="stat"><small>Produtividade</small><strong id="percent">0%</strong><div class="progress"><div id="progressBar"></div></div></div>
 </section>
 
 <div id="alerts" class="alert">
-<strong>â° Lembrete de tarefa!</strong>
+<strong>&#x23F0; Lembrete de tarefa!</strong>
 <div id="alertText"></div>
 <button onclick="snooze()">Adiar 10 minutos</button>
 <button onclick="dismissAlert()">Dispensar</button>
@@ -94,46 +94,46 @@ nav span{display:block;font-size:19px;margin-bottom:3px}
 
 <div class="section">
 <h3 id="heading">Minhas tarefas</h3>
-<div><button class="import-btn" onclick="openImport()">â© Importar</button><button class="add" onclick="newTask()">ï¼ Nova</button></div>
+<div><button class="import-btn" onclick="openImport()">&#x21E9; Importar</button><button class="add" onclick="newTask()">&#xFF0B; Nova</button></div>
 </div>
 
 <div class="filters">
 <button class="filter active" data-filter="all">Todas</button>
 <button class="filter" data-filter="today">Hoje</button>
 <button class="filter" data-filter="pending">Pendentes</button>
-<button class="filter" data-filter="done">ConcluÃ­das</button>
+<button class="filter" data-filter="done">Conclu&#xED;das</button>
 <button class="filter" data-filter="personal">Pessoal</button>
 <button class="filter" data-filter="work">Trabalho</button>
 </div>
 
 <div id="tasks"></div>
-<div class="note">TaskFlow v1.3 â¢ Seus dados ficam salvos neste aparelho.<br>Os lembretes funcionam enquanto o aplicativo estiver ativo.</div>
+<div class="note">TaskFlow v1.3 &#x2022; Seus dados ficam salvos neste aparelho.<br>Os lembretes funcionam enquanto o aplicativo estiver ativo.</div>
 </div>
 
 <nav>
-<button class="active" data-nav="all"><span>â¦</span>InÃ­cio</button>
-<button data-nav="today"><span>â·</span>Hoje</button>
-<button data-nav="personal"><span>â¡</span>Pessoal</button>
-<button data-nav="work"><span>â£</span>Trabalho</button>
+<button class="active" data-nav="all"><span>&#x25A6;</span>In&#xED;cio</button>
+<button data-nav="today"><span>&#x25F7;</span>Hoje</button>
+<button data-nav="personal"><span>&#x2661;</span>Pessoal</button>
+<button data-nav="work"><span>&#x25A3;</span>Trabalho</button>
 </nav>
 
 <dialog id="modal">
 <form id="form">
-<div class="modalhead"><h3 id="modalTitle">Nova tarefa</h3><button type="button" class="close" onclick="modal.close()">Ã</button></div>
+<div class="modalhead"><h3 id="modalTitle">Nova tarefa</h3><button type="button" class="close" onclick="modal.close()">&#xD7;</button></div>
 <input type="hidden" id="id">
 <label>Nome da tarefa *</label>
 <input id="title" required maxlength="100" placeholder="O que precisa ser feito?">
-<label>DescriÃ§Ã£o</label>
+<label>Descri&#xE7;&#xE3;o</label>
 <textarea id="description" placeholder="Detalhes da atividade..."></textarea>
 <div class="grid">
 <div><label>Categoria</label>
 <select id="category"><option value="personal">Pessoal</option><option value="work">Profissional</option></select></div>
 <div><label>Prioridade</label>
-<select id="priority"><option value="low">Baixa</option><option value="medium" selected>MÃ©dia</option><option value="high">Alta</option></select></div>
+<select id="priority"><option value="low">Baixa</option><option value="medium" selected>M&#xE9;dia</option><option value="high">Alta</option></select></div>
 </div>
 <div class="grid">
 <div><label>Data do prazo</label><input type="date" id="due"></div>
-<div><label>HorÃ¡rio do lembrete</label><input type="time" id="reminder"></div>
+<div><label>Hor&#xE1;rio do lembrete</label><input type="time" id="reminder"></div>
 </div>
 <div class="actions">
 <button type="button" onclick="modal.close()">Cancelar</button>
@@ -181,7 +181,7 @@ function importTasks(){
     save();
     alert(normalized.length+' tarefa(s) importada(s) com sucesso!');
   }catch(err){
-    alert('NÃ£o foi possÃ­vel importar. Confira o JSON.\n'+err.message);
+    alert('N\u{E3}o foi poss\u{ED}vel importar. Confira o JSON.\n'+err.message);
   }
 }
 
@@ -250,7 +250,7 @@ function checkReminders(){
  if(due.length){
  const t=due[0];
  activeAlert=t;
- $('alertText').textContent=t.title+' â '+(t.category==='work'?'Profissional':'Pessoal');
+ $('alertText').textContent=t.title+' \u{2014} '+(t.category==='work'?'Profissional':'Pessoal');
  $('alerts').classList.add('show');
  if(navigator.vibrate)navigator.vibrate([250,100,250]);
  }
@@ -281,7 +281,7 @@ function render(){
  $('pending').textContent=tasks.length-completed;
  $('percent').textContent=percent+'%';
  $('progressBar').style.width=percent+'%';
- const names={all:'Minhas tarefas',today:'Tarefas de hoje',pending:'Pendentes',done:'ConcluÃ­das',personal:'Vida pessoal',work:'Profissional'};
+ const names={all:'Minhas tarefas',today:'Tarefas de hoje',pending:'Pendentes',done:'Conclu\u{ED}das',personal:'Vida pessoal',work:'Profissional'};
  $('heading').textContent=names[filter];
  const today=new Date().toISOString().slice(0,10);
  let list=tasks.filter(t=>{
@@ -294,7 +294,7 @@ function render(){
  list.sort((a,b)=>(a.done-b.done)||(a.due||'9999').localeCompare(b.due||'9999'));
  $('tasks').innerHTML='';
  if(!list.length){
- $('tasks').innerHTML='<div class="empty">Nenhuma tarefa por aqui.<br><br>Toque em + Nova para comeÃ§ar.</div>';
+ $('tasks').innerHTML='<div class="empty">Nenhuma tarefa por aqui.<br><br>Toque em + Nova para come\u{E7}ar.</div>';
  return;
  }
  list.forEach(t=>{
@@ -303,7 +303,7 @@ function render(){
  el.className='task'+(t.done?' done':'')+(isLate?' overdue':'');
  const check=document.createElement('button');
  check.className='check';
- check.textContent=t.done?'â':'';
+ check.textContent=t.done?'\u{2713}':'';
  check.onclick=()=>{
  t.done=!t.done;
  if(t.done){delete snoozed[t.id];}
@@ -320,7 +320,7 @@ function render(){
  cat.textContent=t.category==='work'?'Profissional':'Pessoal';
  const pri=document.createElement('span');
  pri.className=t.priority||'medium';
- pri.textContent={high:'Alta prioridade',medium:'MÃ©dia prioridade',low:'Baixa prioridade'}[t.priority]||'MÃ©dia prioridade';
+ pri.textContent={high:'Alta prioridade',medium:'M\u{E9}dia prioridade',low:'Baixa prioridade'}[t.priority]||'M\u{E9}dia prioridade';
  meta.append(cat,pri);
  if(t.due){
  const date=document.createElement('span');
@@ -342,18 +342,18 @@ function render(){
  if(isLate){
  const late=document.createElement('div');
  late.className='overdue-label';
- late.textContent='â  TAREFA ATRASADA';
+ late.textContent='\u{26A0} TAREFA ATRASADA';
  body.append(late);
  }else if(!t.done&&t.due===today&&t.reminder){
  const soon=document.createElement('div');
  soon.className='due-soon';
- soon.textContent='â· Lembrete programado';
+ soon.textContent='\u{25F7} Lembrete programado';
  body.append(soon);
  }
  body.onclick=()=>editTask(t.id);
  const del=document.createElement('button');
  del.className='delete';
- del.textContent='Ã';
+ del.textContent='\u{D7}';
  del.onclick=()=>{if(confirm('Excluir esta tarefa?')){tasks=tasks.filter(x=>x.id!==t.id);delete snoozed[t.id];save()}};
  el.append(check,body,del);
  $('tasks').append(el);
@@ -371,7 +371,7 @@ document.querySelectorAll('[data-nav]').forEach(b=>b.onclick=()=>{
  document.querySelectorAll('[data-nav]').forEach(x=>x.classList.toggle('active',x===b));
  render();
 });
-$('greeting').textContent='Hoje Ã© '+new Date().toLocaleDateString('pt-BR',{weekday:'long',day:'numeric',month:'long'})+'. Vamos nessa.';
+$('greeting').textContent='Hoje \u{E9} '+new Date().toLocaleDateString('pt-BR',{weekday:'long',day:'numeric',month:'long'})+'. Vamos nessa.';
 render();
 checkReminders();
 setInterval(checkReminders,15000);
@@ -380,4 +380,3 @@ window.addEventListener('focus',checkReminders);
 </script>
 </body>
 </html>
-
