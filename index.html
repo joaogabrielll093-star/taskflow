@@ -11,7 +11,7 @@
 <link rel="manifest" href="manifest.json">
 <link rel="icon" href="icon.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="icon-180.png">
-<title>TaskFlow v3.0.0</title>
+<title>TaskFlow v3.1.0</title>
 <style>
 :root{color-scheme:dark;--petrol:#070A18;--panel:#0F1530;--panel2:#18204A;--line:#27316B;--mist:#EAF0FF;--muted:#8E9AC4;--amber:#FFC857;--coolant:#9FC2FF;--coral:#FF6B6B;--steel:#7F8FC4;
 --display:"Avenir Next","SF Pro Display",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
@@ -39,9 +39,9 @@ button{font:inherit;color:inherit;cursor:pointer;-webkit-appearance:none;appeara
 
 .grp{margin-bottom:18px}
 .gh{display:flex;justify-content:space-between;align-items:center;padding:0 2px 2px}
-.gh h3{margin:0;font:700 15px var(--display);letter-spacing:.3px;color:var(--muted)}
+.gh h2{margin:0;font:700 15px var(--display);letter-spacing:.3px;color:var(--muted)}
 .gh span{font:600 13px var(--display);color:var(--muted);font-variant-numeric:tabular-nums}
-.grp.late .gh h3,.grp.late .gh span{color:var(--coral)}
+.grp.late .gh h2,.grp.late .gh span{color:var(--coral)}
 .row{position:relative;display:grid;grid-template-columns:48px 30px 1fr;column-gap:2px;padding:10px 0 12px}
 .row::before{content:"";position:absolute;left:64px;top:0;bottom:0;width:2px;background:var(--line)}
 .row:first-child::before{top:21px}
@@ -53,7 +53,7 @@ button{font:inherit;color:inherit;cursor:pointer;-webkit-appearance:none;appeara
 .node:active i{transform:scale(.86)}
 .row.done .node i{background:var(--coolant);border-color:var(--coolant)}
 .row.done .node i::after{content:"";width:6px;height:11px;margin-top:-2px;border:solid var(--petrol);border-width:0 2.5px 2.5px 0;transform:rotate(45deg)}
-.rc{min-width:0;cursor:pointer;padding-left:6px}
+.rc{min-width:0;padding-left:6px}
 .rtitle{font-size:16px;font-weight:600;line-height:22px;overflow-wrap:anywhere}
 .row.done .rtitle{color:var(--muted);text-decoration:line-through}
 .row.done .rt{color:var(--muted)}
@@ -209,17 +209,45 @@ body.bayopen #toast{bottom:calc(48dvh + 12px)}
 .legend li:last-child{border:0}
 .legend b{flex:none;width:78px;font:600 11px/1.7 var(--display);letter-spacing:.12em;text-transform:uppercase;color:var(--amber)}
 .legend span{min-width:0}
+
+/* ===== v3.1 acessibilidade e acabamento ===== */
+button,[role=button],label,select{touch-action:manipulation}
+input:focus-visible,textarea:focus-visible{outline:2px solid var(--amber);outline-offset:2px;border-color:var(--amber)}
+input::placeholder,textarea::placeholder{color:#8089B8}
+.sub{min-height:44px}
+.seg span,.seg button{min-height:44px}
+#bay{overscroll-behavior:contain}
+#bTitle:focus{outline:none}
+#listView{-webkit-user-select:text;user-select:text}
+.grp{content-visibility:auto;contain-intrinsic-size:auto 220px}
+h1,h2,h3,.rtitle,.hl h1{text-wrap:balance}
+.ropen{display:block;width:100%;padding:0;margin:0;border:0;background:none;color:inherit;font:inherit;text-align:left;border-radius:10px}
+.ropen:focus-visible{outline:2px solid var(--amber);outline-offset:3px}
+#sky:focus-visible{outline:2px solid var(--amber);outline-offset:-4px}
+@media (hover:hover){
+.iconbtn:hover,.dbtn:hover,.xbtn:hover{border-color:var(--amber)}
+.xbtn:hover{background:var(--line)}
+.mrow:hover{background:rgba(255,255,255,.04)}
+.seg button:hover:not(.on){color:var(--mist)}
+.primary:hover{filter:brightness(1.08)}
+.ghost:hover,.arow button:hover,.bact button:hover{border-color:var(--amber)}
+.next:hover{border-color:var(--amber)}
+.ropen:hover .rtitle{color:var(--amber)}
+.launch:hover{box-shadow:0 0 0 6px rgba(255,200,87,.2),0 0 40px rgba(255,200,87,.55)}
+.sub:hover span{color:var(--amber)}
+}
 </style>
 </head>
 <body>
 <svg width="0" height="0" style="position:absolute" aria-hidden="true"><symbol id="mark" viewBox="70 70 372 372"><circle cx="256" cy="256" r="150" fill="none" stroke="#27316B" stroke-width="12" stroke-dasharray="2 14" stroke-linecap="round"/><circle cx="256" cy="256" r="74" fill="#070A18" stroke="#FFC857" stroke-width="18"/><path d="M228 259l20 20 38-48" fill="none" stroke="#EAF0FF" stroke-width="14" stroke-linecap="round" stroke-linejoin="round"/><circle cx="371" cy="160" r="32" fill="#9FC2FF"/></symbol></svg>
 
-<canvas id="sky" role="img" aria-label="Mapa espacial das suas tarefas: cada tarefa é um planeta em órbita do sol, que mostra o progresso de hoje."></canvas>
+<canvas id="sky" role="application" aria-roledescription="mapa de tarefas" aria-label="Mapa espacial das tarefas. Use as setas para escolher uma tarefa, Enter para abrir, mais e menos para o zoom, zero para voltar ao centro. A lista tem as mesmas tarefas." tabindex="0"></canvas>
 <div class="sr" id="srSum" aria-live="polite"></div>
+<div class="sr" id="srLive" aria-live="polite"></div>
 
 <header id="hud">
 <div class="hl"><p id="dateLine"></p><h1 id="hello">Olá</h1></div>
-<button class="iconbtn" id="menuBtn" aria-label="Abrir menu"><svg viewBox="0 0 24 24"><circle cx="5" cy="12" r="1.9"/><circle cx="12" cy="12" r="1.9"/><circle cx="19" cy="12" r="1.9"/></svg></button>
+<button class="iconbtn" id="menuBtn" aria-label="Abrir menu"><svg aria-hidden="true" viewBox="0 0 24 24"><circle cx="5" cy="12" r="1.9"/><circle cx="12" cy="12" r="1.9"/><circle cx="19" cy="12" r="1.9"/></svg></button>
 </header>
 
 <button class="next" id="next" hidden>
@@ -230,8 +258,8 @@ body.bayopen #toast{bottom:calc(48dvh + 12px)}
 <div id="hint" hidden><b id="hintT">Universo vazio</b><span id="hintS">Toque no foguete para criar o primeiro planeta.</span></div>
 
 <main id="listView"><div class="lw">
-<div class="seg" id="viewSeg"><button class="on" data-view="all">Tudo</button><button data-view="today">Hoje</button><button data-view="personal">Pessoal</button><button data-view="work">Trabalho</button></div>
-<div class="seg" id="statSeg"><button class="on" data-stat="open">Pendentes</button><button data-stat="done">Concluídas</button><button data-stat="all">Todas</button></div>
+<div class="seg" id="viewSeg"><button class="on" aria-pressed="true" data-view="all">Tudo</button><button aria-pressed="false" data-view="today">Hoje</button><button aria-pressed="false" data-view="personal">Pessoal</button><button aria-pressed="false" data-view="work">Trabalho</button></div>
+<div class="seg" id="statSeg"><button class="on" aria-pressed="true" data-stat="open">Pendentes</button><button aria-pressed="false" data-stat="done">Concluídas</button><button aria-pressed="false" data-stat="all">Todas</button></div>
 <div id="tasks"></div>
 </div></main>
 
@@ -249,7 +277,7 @@ body.bayopen #toast{bottom:calc(48dvh + 12px)}
 
 <section id="bay" aria-label="Detalhes da tarefa" aria-hidden="true">
 <div class="grab"></div>
-<div class="bhead"><h2 id="bTitle"></h2><button class="xbtn" id="bClose" aria-label="Fechar">×</button></div>
+<div class="bhead"><h2 id="bTitle" tabindex="-1"></h2><button class="xbtn" id="bClose" aria-label="Fechar">×</button></div>
 <div id="bChips"></div>
 <p class="bdesc" id="bDesc" hidden></p>
 <div class="bsubs" id="bSubs"></div>
@@ -257,12 +285,12 @@ body.bayopen #toast{bottom:calc(48dvh + 12px)}
 </section>
 
 <nav id="dock" aria-label="Controles">
-<button class="dbtn" id="viewBtn" aria-label="Ver em lista"><svg class="i-list" viewBox="0 0 24 24"><path d="M8 6h12M8 12h12M8 18h12"/><circle cx="4" cy="6" r=".6"/><circle cx="4" cy="12" r=".6"/><circle cx="4" cy="18" r=".6"/></svg><svg class="i-map" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><circle cx="12" cy="12" r="9" stroke-dasharray="1.5 3.2"/><circle cx="19.2" cy="8" r="1.4"/></svg></button>
-<button class="launch" id="fab" aria-label="Nova tarefa"><svg viewBox="0 0 24 24"><path d="M12 2.8c3.2 2.2 5 5.6 5 9.4l-2.2 3H9.2l-2.2-3c0-3.800 1.800-7.200 5-9.400z"/><circle cx="12" cy="9.800" r="1.600"/><path d="M9 15.200l-2.800 3.300M15 15.200l2.800 3.300M12 16v5"/></svg></button>
-<button class="dbtn" id="homeBtn" aria-label="Voltar ao centro"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="7"/><circle cx="12" cy="12" r="1.600"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3"/></svg></button>
+<button class="dbtn" id="viewBtn" aria-label="Ver em lista"><svg aria-hidden="true" class="i-list" viewBox="0 0 24 24"><path d="M8 6h12M8 12h12M8 18h12"/><circle cx="4" cy="6" r=".6"/><circle cx="4" cy="12" r=".6"/><circle cx="4" cy="18" r=".6"/></svg><svg aria-hidden="true" class="i-map" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><circle cx="12" cy="12" r="9" stroke-dasharray="1.5 3.2"/><circle cx="19.2" cy="8" r="1.4"/></svg></button>
+<button class="launch" id="fab" aria-label="Nova tarefa"><svg aria-hidden="true" viewBox="0 0 24 24"><path d="M12 2.8c3.2 2.2 5 5.6 5 9.4l-2.2 3H9.2l-2.2-3c0-3.800 1.800-7.200 5-9.400z"/><circle cx="12" cy="9.800" r="1.600"/><path d="M9 15.200l-2.800 3.300M15 15.200l2.800 3.300M12 16v5"/></svg></button>
+<button class="dbtn" id="homeBtn" aria-label="Voltar ao centro"><svg aria-hidden="true" viewBox="0 0 24 24"><circle cx="12" cy="12" r="7"/><circle cx="12" cy="12" r="1.600"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3"/></svg></button>
 </nav>
 
-<div id="intro" aria-hidden="true"><svg><use href="#mark" width="88" height="88"/></svg><b>TASKFLOW</b><span>entrando no universo</span></div>
+<div id="intro" aria-hidden="true"><svg><use href="#mark" width="88" height="88"/></svg><b translate="no">TASKFLOW</b><span>entrando no universo</span></div>
 
 
 
@@ -270,10 +298,10 @@ body.bayopen #toast{bottom:calc(48dvh + 12px)}
 <form id="quick" class="in" autocomplete="off">
 <div class="shead"><h3>Nova tarefa</h3><button type="button" class="xbtn" data-close aria-label="Fechar">×</button></div>
 <label class="sr" for="qtext">Descreva a tarefa</label>
-<input id="qtext" maxlength="160" placeholder="Ex.: Dentista amanhã às 15h">
-<button type="button" class="aibtn" id="aiBtn" hidden><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l1.8 4.7 4.7 1.8-4.7 1.8L12 16l-1.8-4.7L5.5 9.5l4.7-1.8z"/><path d="M19 15l.8 2.2L22 18l-2.2.8L19 21l-.8-2.2L16 18l2.2-.8z"/></svg><span>Interpretar com IA</span></button>
+<input id="qtext" name="quick-text" maxlength="160" autofocus autocapitalize="sentences" placeholder="Ex.: Dentista amanhã às 15h…">
+<button type="button" class="aibtn" id="aiBtn" hidden><svg aria-hidden="true" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l1.8 4.7 4.7 1.8-4.7 1.8L12 16l-1.8-4.7L5.5 9.5l4.7-1.8z"/><path d="M19 15l.8 2.2L22 18l-2.2.8L19 21l-.8-2.2L16 18l2.2-.8z"/></svg><span>Interpretar com IA</span></button>
 <div class="aihint" id="aiNote"></div>
-<div class="aihint err" id="aiErr"></div>
+<div class="aihint err" id="aiErr" aria-live="polite"></div>
 <div id="qlist"></div>
 <div class="actions"><button type="button" class="ghost" id="qMore">Mais detalhes</button><button type="submit" class="primary" id="qAdd">Adicionar</button></div>
 </form>
@@ -282,14 +310,14 @@ body.bayopen #toast{bottom:calc(48dvh + 12px)}
 <dialog id="modal" class="sheet">
 <form id="form" class="in">
 <div class="shead"><h3 id="modalTitle">Nova tarefa</h3><button type="button" class="xbtn" data-close aria-label="Fechar">×</button></div>
-<input type="hidden" id="id">
-<div class="fld"><label class="fl" for="title">O que precisa ser feito?</label><input id="title" required maxlength="100" placeholder="Ex.: Enviar proposta ao cliente"></div>
-<div class="fld"><label class="fl" for="description">Detalhes</label><textarea id="description" rows="2" placeholder="Opcional"></textarea></div>
+<input type="hidden" id="id" name="id">
+<div class="fld"><label class="fl" for="title">O que precisa ser feito?</label><input id="title" name="title" required maxlength="100" placeholder="Ex.: Enviar proposta ao cliente…"></div>
+<div class="fld"><label class="fl" for="description">Detalhes</label><textarea id="description" name="description" rows="2" placeholder="Opcional…"></textarea></div>
 <div class="fld"><span class="fl">Categoria</span><div class="seg"><label><input type="radio" name="category" value="personal" checked><span>Pessoal</span></label><label><input type="radio" name="category" value="work"><span>Profissional</span></label></div></div>
 <div class="fld"><span class="fl">Prioridade</span><div class="seg" id="prioSeg"><label><input type="radio" name="priority" value="low"><span>Baixa</span></label><label><input type="radio" name="priority" value="medium" checked><span>Média</span></label><label><input type="radio" name="priority" value="high"><span>Alta</span></label></div></div>
-<div class="two fld"><div><label class="fl" for="due">Prazo</label><input type="date" id="due"></div><div><label class="fl" for="reminder">Lembrar às</label><input type="time" id="reminder"></div></div>
+<div class="two fld"><div><label class="fl" for="due">Prazo</label><input type="date" id="due" name="due"></div><div><label class="fl" for="reminder">Lembrar às</label><input type="time" id="reminder" name="reminder"></div></div>
 <div class="fld"><span class="fl">Repetir</span><div class="seg"><label><input type="radio" name="repeat" value="" checked><span>Não</span></label><label><input type="radio" name="repeat" value="daily"><span>Diário</span></label><label><input type="radio" name="repeat" value="weekly"><span>Semanal</span></label><label><input type="radio" name="repeat" value="monthly"><span>Mensal</span></label></div></div>
-<div class="fld"><label class="fl" for="subs">Subtarefas</label><textarea id="subs" rows="3" placeholder="Uma por linha"></textarea><small class="hint">Para deixar uma já feita, comece a linha com [x].</small></div>
+<div class="fld"><label class="fl" for="subs">Subtarefas</label><textarea id="subs" name="subs" rows="3" placeholder="Uma por linha…"></textarea><small class="hint">Para deixar uma já feita, comece a linha com [x].</small></div>
 <div class="fld" id="icsBox" hidden><button type="button" class="ghost" id="icsBtn" style="width:100%">Adicionar ao calendário</button><small class="hint">Cria um evento com alarme a partir dos dados já salvos. O calendário do celular avisa mesmo com o app fechado.</small></div>
 <div class="actions"><button type="button" class="danger" id="delBtn" hidden>Excluir</button><button class="primary" type="submit">Salvar tarefa</button></div>
 </form>
@@ -307,8 +335,9 @@ body.bayopen #toast{bottom:calc(48dvh + 12px)}
 <button class="mrow" id="mInstall" hidden>Instalar na tela inicial</button>
 <button class="mrow" id="mTilt" hidden>Efeito de inclinação<small>Ativar</small></button>
 <button class="mrow" id="mHelp">Como usar o mapa</button>
+<button class="mrow" id="mCalm">Animações do fundo<small>Ligadas</small></button>
 </div>
-<div class="mfoot"><b>Organize. Priorize. Realize.</b>TaskFlow v3.0.0, build 300. Seus dados ficam salvos neste aparelho, então faça backup de vez em quando. Os lembretes do app funcionam com ele aberto. Para ser avisado com o app fechado, abra uma tarefa e use Adicionar ao calendário. No iPhone, as notificações só chegam com o app instalado na tela inicial.</div>
+<div class="mfoot"><b>Organize. Priorize. Realize.</b><span translate="no">TaskFlow</span> v3.1.0, build 310. Seus dados ficam salvos neste aparelho, então faça backup de vez em quando. Os lembretes do app funcionam com ele aberto. Para ser avisado com o app fechado, abra uma tarefa e use Adicionar ao calendário. No iPhone, as notificações só chegam com o app instalado na tela inicial.</div>
 </div>
 </dialog>
 
@@ -316,8 +345,8 @@ body.bayopen #toast{bottom:calc(48dvh + 12px)}
 <form id="importForm" class="in">
 <div class="shead"><h3>Importar tarefas</h3><button type="button" class="xbtn" data-close aria-label="Fechar">×</button></div>
 <div class="fld"><label class="fl" for="importData">Cole o JSON de uma tarefa ou de uma lista. O backup do TaskFlow também funciona.</label>
-<textarea id="importData" required style="min-height:150px" placeholder='{"title":"Reunião com cliente","category":"work","priority":"high","due":"2026-11-30","reminder":"10:00"}'></textarea></div>
-<div id="impErr"></div>
+<textarea id="importData" name="import-data" spellcheck="false" autocomplete="off" required style="min-height:150px" placeholder='{"title":"Reunião com cliente","category":"work","priority":"high","due":"2026-11-30","reminder":"10:00"}'></textarea></div>
+<div id="impErr" aria-live="polite"></div>
 <div class="actions"><button type="button" class="ghost" id="pasteBtn">Colar</button><button type="submit" class="primary">Importar agora</button></div>
 </form>
 </dialog>
@@ -355,11 +384,13 @@ const REP={daily:'Diária',weekly:'Semanal',monthly:'Mensal'};
 const AI_URL='';
 
 /* ---------- datas, recorrência e leitura de frases ---------- */
+const DFMT=new Intl.DateTimeFormat('pt-BR',{weekday:'short',day:'2-digit',month:'2-digit'});
+const RTF=new Intl.RelativeTimeFormat('pt-BR',{numeric:'auto'});
 function dueLabel(d){
  if(d===dayStr(0))return 'Hoje';
  if(d===dayStr(1))return 'Amanhã';
  const x=new Date(d+'T12:00:00');
- return x.toLocaleDateString('pt-BR',{weekday:'short'}).replace('.','')+' '+pad(x.getDate())+'/'+pad(x.getMonth()+1);
+ return DFMT.format(x).replace(/[.,]/g,'');
 }
 function nextDue(d,r){
  const x=new Date((d||localDate())+'T12:00:00'),day=x.getDate();
@@ -526,12 +557,13 @@ $('form').onsubmit=e=>{
   spawned:old?!!old.spawned:false
  };
  if(old&&old.doneAt)item.doneAt=old.doneAt;
- if(!item.title)return;
+ if(!item.title){const f=$('title');f.setCustomValidity('Escreva o que precisa ser feito.');f.reportValidity();f.focus();return}
  if(old)tasks=tasks.map(t=>t.id===id?item:t);else tasks.push(item);
  delete alerted[item.id];delete snoozed[item.id];persistAlerts();
  $('modal').close();save();
  toast(old?'Alterações salvas':'Tarefa criada');
 };
+$('title').addEventListener('input',e=>e.target.setCustomValidity(''));
 $('delBtn').onclick=()=>{
  const id=$('id').value,i=tasks.findIndex(t=>t.id===id);
  if(i<0)return;
@@ -618,7 +650,7 @@ $('quick').onsubmit=e=>{
 $('qMore').onclick=()=>{const p=aiTasks?aiTasks[0]:quickParse($('qtext').value,qPreset);$('qsheet').close();openForm(null,p)};
 
 /* ---------- backup e importação ---------- */
-function backupJson(){return JSON.stringify({app:'TaskFlow',version:'3.0.0',tasks},null,2)}
+function backupJson(){return JSON.stringify({app:'TaskFlow',version:'3.1.0',tasks},null,2)}
 async function shareFile(name,mime,content){
  const f=new File([content],name,{type:mime});
  if(navigator.canShare&&navigator.canShare({files:[f]})){
@@ -687,9 +719,9 @@ $('importForm').onsubmit=e=>{
 function rel(c,now){
  const m=Math.round((reminderDate(c)-now)/60000);
  if(m<=0)return 'agora';
- if(m<60)return 'em '+m+' min';
+ if(m<60)return RTF.format(m,'minute');
  const hh=Math.floor(m/60),mm=m%60;
- return 'em '+hh+' h'+(mm?' '+mm+' min':'');
+ return mm?'em '+hh+' h '+mm+' min':RTF.format(hh,'hour');
 }
 function renderNext(){
  const now=new Date(),today=localDate(now),hm=pad(now.getHours())+':'+pad(now.getMinutes());
@@ -725,8 +757,9 @@ function row(t,g){
  node.setAttribute('aria-label',t.done?'Reabrir tarefa':'Concluir tarefa');
  node.append(h('i'));
  node.onclick=()=>toggle(t);
- const c=h('div','rc');
- c.append(h('div','rtitle',t.title));
+ const c=h('div','rc'),op=h('button','ropen');
+ op.type='button';
+ op.append(h('div','rtitle',t.title));
  const meta=h('div','rmeta');
  meta.append(h('span','',t.category==='work'?'Profissional':'Pessoal'));
  if(t.priority==='high')meta.append(h('span','hi-p','Alta'));
@@ -734,15 +767,16 @@ function row(t,g){
  if(t.due&&(g==='late'||g==='later'))meta.append(h('span','',dueLabel(t.due)));
  if(t.repeat)meta.append(h('span','','↻ '+REP[t.repeat]));
  if((t.subs||[]).length)meta.append(h('span','',t.subs.filter(s=>s.d).length+'/'+t.subs.length+' subtarefas'));
- c.append(meta);
- if(t.description)c.append(h('p','rdesc',t.description));
+ op.append(meta);
+ if(t.description)op.append(h('p','rdesc',t.description));
+ op.onclick=()=>editTask(t.id);
+ c.append(op);
  (t.subs||[]).forEach(s=>{
   const b=h('button','sub'+(s.d?' on':''));
   b.append(h('b'),h('span','',s.t));
   b.onclick=e=>{e.stopPropagation();s.d=!s.d;save()};
   c.append(b);
  });
- c.onclick=()=>editTask(t.id);
  el.append(h('div','rt',t.reminder||''),node,c);
  return el;
 }
@@ -760,7 +794,7 @@ function renderList(){
  if(!list.length){
   const e=h('div','empty');
   e.innerHTML='<svg aria-hidden="true"><use href="#mark" width="68" height="68"/></svg>';
-  e.append(h('strong','','Nada por aqui'),document.createTextNode('Toque no foguete e escreva do jeito que falaria, como "Dentista amanhã às 15h".'));
+  e.append(h('strong','','Nada por aqui'),document.createTextNode('Toque no foguete e escreva do jeito que falaria, como “Dentista amanhã às 15h”.'));
   box.append(e);
   return;
  }
@@ -772,11 +806,11 @@ function renderList(){
   if(!items.length)return;
   if(g==='done')items.sort((a,b)=>(b.doneAt||0)-(a.doneAt||0));else items.sort(cmp);
   const sec=h('section','grp '+g),head=h('div','gh'),rows=h('div','rows');
-  head.append(h('h3','',GN[g]),h('span','',String(items.length)));
+  head.append(h('h2','',GN[g]),h('span','',String(items.length)));
   const shown=(g==='done'&&stat==='all'&&items.length>5)?items.slice(0,5):items;
   shown.forEach(t=>rows.append(row(t,g)));
   sec.append(head,rows);
-  if(shown.length<items.length){const m=h('button','more','Ver todas as concluídas ('+items.length+')');m.onclick=()=>setStat('done');sec.append(m)}
+  if(shown.length<items.length){const m=h('button','more','Ver todas as concluídas ('+items.length+')');m.type='button';m.onclick=()=>setStat('done');sec.append(m)}
   box.append(sec);
  });
 }
@@ -789,13 +823,13 @@ function render(){
  updateHint();srSummary();
 }
 function setView(v){
- view=v;
- document.querySelectorAll('[data-view]').forEach(b=>b.classList.toggle('on',b.dataset.view===v));
+ view=v;saveUi();
+ document.querySelectorAll('[data-view]').forEach(b=>{const on=b.dataset.view===v;b.classList.toggle('on',on);b.setAttribute('aria-pressed',String(on))});
  renderList();$('listView').scrollTo({top:0});
 }
 function setStat(s){
- stat=s;
- document.querySelectorAll('[data-stat]').forEach(b=>b.classList.toggle('on',b.dataset.stat===s));
+ stat=s;saveUi();
+ document.querySelectorAll('[data-stat]').forEach(b=>{const on=b.dataset.stat===s;b.classList.toggle('on',on);b.setAttribute('aria-pressed',String(on))});
  renderList();
 }
 document.querySelectorAll('[data-view]').forEach(b=>b.onclick=()=>setView(b.dataset.view));
@@ -804,7 +838,9 @@ document.querySelectorAll('[data-stat]').forEach(b=>b.onclick=()=>setStat(b.data
 
 /* ---------- universo: núcleo e fundo ---------- */
 const cv=$('sky'),cx=cv.getContext('2d');
-const REDUCE=matchMedia('(prefers-reduced-motion: reduce)').matches;
+let calm=false;try{calm=localStorage.getItem('taskflow_calm')==='1'}catch(e){}
+const SYSRED=matchMedia('(prefers-reduced-motion: reduce)').matches;
+let REDUCE=SYSRED||calm;
 const FONT='system-ui,-apple-system,"Segoe UI",Roboto,sans-serif';
 const RINGS=[{k:'late',r:78,n:'Atrasadas'},{k:'today',r:132,n:'Hoje'},{k:'tomorrow',r:188,n:'Amanhã'},{k:'week',r:248,n:'Esta semana'},{k:'later',r:308,n:'Depois'},{k:'none',r:372,n:'Sem prazo'}];
 const RING=Object.fromEntries(RINGS.map(r=>[r.k,r]));
@@ -940,6 +976,8 @@ function rebuildCosmos(){
  }));
 }
 const gpos=s=>[Math.cos(s.a0+gRot)*s.rad,Math.sin(s.a0+gRot)*s.rad];
+const glowSpr={};
+function glow(gold){const k=gold?'g':'b';if(!glowSpr[k]){const c=document.createElement('canvas');c.width=c.height=64;const g=c.getContext('2d'),col=gold?'255,215,130':'191,214,255',gr=g.createRadialGradient(32,32,0,32,32,32);gr.addColorStop(0,'rgba('+col+',1)');gr.addColorStop(1,'rgba('+col+',0)');g.fillStyle=gr;g.fillRect(0,0,64,64);glowSpr[k]=c}return glowSpr[k]}
 function drawGalaxy(t){
  if(!galaxy.length)return;
  const pts=galaxy.map(s=>{const [wx,wy]=gpos(s),[sx,sy]=w2s(wx,wy);return {s,sx,sy}});
@@ -948,12 +986,12 @@ function drawGalaxy(t){
   cx.strokeStyle='rgba(159,194,255,.22)';cx.lineWidth=1;cx.beginPath();
   near.forEach((p,i)=>{i?cx.lineTo(p.sx,p.sy):cx.moveTo(p.sx,p.sy)});cx.stroke();
  }
+ const baseA=cx.globalAlpha;
  pts.forEach(({s,sx,sy})=>{
   if(sx<-20||sx>W+20||sy<-20||sy>H+20)return;
   const r=s.sz*Math.max(.9,cam.z),tw=REDUCE?1:.6+.4*Math.sin(t*2+s.p),col=s.i<3?'255,215,130':'191,214,255';
-  const g=cx.createRadialGradient(sx,sy,0,sx,sy,r*4);g.addColorStop(0,'rgba('+col+','+(.55*tw)+')');g.addColorStop(1,'rgba('+col+',0)');
-  cx.fillStyle=g;cx.beginPath();cx.arc(sx,sy,r*4,0,6.2832);cx.fill();
-  cx.fillStyle='rgba('+col+','+(.9*tw)+')';cx.beginPath();cx.arc(sx,sy,r,0,6.2832);cx.fill();
+  cx.globalAlpha=baseA*.55*tw;cx.drawImage(glow(s.i<3),sx-r*4,sy-r*4,r*8,r*8);
+  cx.globalAlpha=baseA;cx.fillStyle='rgba('+col+','+(.9*tw)+')';cx.beginPath();cx.arc(sx,sy,r,0,6.2832);cx.fill();
  });
 }
 function updateBody(b,dt){
@@ -1045,7 +1083,9 @@ function resize(){
  makeStars();makeNebula();
  if(!userMoved&&!sel)fitCam(booted);
 }
+let frameN=0;
 function frame(ts){
+ if(mode==='list'&&(frameN++%3)){requestAnimationFrame(frame);return}
  const t=ts/1000,dt=Math.min(.05,Math.max(.001,t-last));last=t;
  const kz=Math.min(1,dt*(warp>.05?1.4:6));
  if(cam.follow){const b=cam.follow,k=Math.min(1,dt*5);cam.x+=(b.x-cam.x)*k;cam.y+=(b.y-cam.y)*k}
@@ -1152,7 +1192,7 @@ function pEnd(e){
 cv.addEventListener('pointerup',pEnd);cv.addEventListener('pointercancel',pEnd);
 cv.addEventListener('pointerleave',e=>{if(e.pointerType==='mouse')hover=null});
 cv.addEventListener('wheel',e=>{if(mode!=='map')return;e.preventDefault();zoomTo(cam.tz*Math.exp(-e.deltaY*.0016),e.clientX,e.clientY)},{passive:false});
-document.addEventListener('gesturestart',e=>e.preventDefault());
+document.addEventListener('gesturestart',e=>{if(mode==='map')e.preventDefault()});
 function onHold(){
  hold=null;
  if(!g||g.mode||ptrs.size!==1)return;
@@ -1196,15 +1236,19 @@ function moveTask(b,k){
 
 /* ---------- universo: painel da tarefa, modos e inclinação ---------- */
 function focusBody(b){
- if(!sel)cam.prev={x:cam.x,y:cam.y,z:cam.tz};
+ if(!sel){cam.prev={x:cam.x,y:cam.y,z:cam.tz};lastFocus=document.activeElement}
  sel=b.id;cam.follow=b;cam.go=null;cam.pvx=cam.pvy=0;cam.tz=Math.max(cam.tz,1.2);cam.tfy=.3;
  fillBay();
  $('bay').classList.add('open');$('bay').setAttribute('aria-hidden','false');document.body.classList.add('bayopen');
+ requestAnimationFrame(()=>{if(sel)$('bTitle').focus({preventScroll:true})});
 }
+let lastFocus=null;
 function closeBay(){
  sel=null;cam.follow=null;cam.tfy=.5;
  $('bay').classList.remove('open');$('bay').setAttribute('aria-hidden','true');document.body.classList.remove('bayopen');
  if(cam.prev){cam.tz=cam.prev.z;cam.go={x:cam.prev.x,y:cam.prev.y};cam.prev=null}
+ if(lastFocus&&lastFocus.focus&&document.contains(lastFocus)){try{lastFocus.focus({preventScroll:true})}catch(e){}}
+ lastFocus=null;
 }
 function fillBay(){
  const t=tasks.find(x=>x.id===sel);
@@ -1230,7 +1274,7 @@ function focusOrEdit(c){
  if(mode==='map'&&b)focusBody(b);else editTask(c.id);
 }
 function setMode(m){
- mode=m;document.body.classList.toggle('list',m==='list');
+ mode=m;saveUi();document.body.classList.toggle('list',m==='list');
  $('viewBtn').setAttribute('aria-label',m==='list'?'Ver no mapa':'Ver em lista');
  if(m==='list'){cancelHold();if(dragB)endDrag(true);if(sel)closeBay();renderList()}
  updateHint();
@@ -1244,9 +1288,12 @@ function updateHint(){
  $('hintS').textContent=tasks.length?'Tudo concluído. Toque no foguete para lançar um novo planeta.':'Toque no foguete para criar o primeiro planeta.';
  $('fab').classList.toggle('call',!tasks.length);
 }
-function srSummary(){
+let srT=0;
+function srSummary(){clearTimeout(srT);srT=setTimeout(srSummaryNow,1500)}
+function srSummaryNow(){
  const today=localDate(),open=tasks.filter(t=>!t.done),late=open.filter(t=>t.due&&t.due<today).length;
- $('srSum').textContent=open.length+(open.length===1?' tarefa pendente, ':' tarefas pendentes, ')+late+(late===1?' atrasada. ':' atrasadas. ')+'Hoje: '+sunDone+' de '+sunTot+' concluídas.';
+ const txt=open.length+(open.length===1?' tarefa pendente, ':' tarefas pendentes, ')+late+(late===1?' atrasada. ':' atrasadas. ')+'Hoje: '+sunDone+' de '+sunTot+' concluídas.';
+ if($('srSum').textContent!==txt)$('srSum').textContent=txt;
 }
 let tiltOn=false;
 function onTilt(e){if(e.gamma==null)return;tilt.tx=clamp(e.gamma/30,-1,1);tilt.ty=clamp((e.beta-45)/30,-1,1)}
@@ -1257,12 +1304,13 @@ if(coarse&&'DeviceOrientationEvent' in window&&!needsPerm)enableTilt();
 $('mTilt').hidden=!(coarse&&needsPerm);
 $('mTilt').onclick=()=>{
  $('menu').close();
- DeviceOrientationEvent.requestPermission().then(s=>{if(s==='granted'){enableTilt();toast('Efeito de inclinação ativado')}else toast('Permissão não concedida')}).catch(()=>toast('Não foi possível ativar a inclinação'));
+ DeviceOrientationEvent.requestPermission().then(s=>{if(s==='granted'){enableTilt();toast('Efeito de inclinação ativado')}else toast('Permissão negada. Ative o acesso a movimento nas configurações do navegador.')}).catch(()=>toast('Não foi possível ativar a inclinação'));
 };
 $('mHelp').onclick=()=>{$('menu').close();$('helpDlg').showModal()};
 
 /* ---------- menu e janelas ---------- */
-document.querySelectorAll('dialog').forEach(d=>d.addEventListener('click',e=>{if(e.target===d)d.close()}));
+document.querySelectorAll('dialog').forEach(d=>d.addEventListener('click',e=>{if(e.target===d&&!d.dataset.dirty)d.close()}));
+document.querySelectorAll('dialog').forEach(d=>{d.addEventListener('input',()=>{d.dataset.dirty='1'});d.addEventListener('close',()=>{delete d.dataset.dirty})});
 document.querySelectorAll('[data-close]').forEach(b=>b.onclick=()=>b.closest('dialog').close());
 $('menuBtn').onclick=()=>{updateNotifBtn();$('menu').showModal()};
 $('mImport').onclick=()=>{$('menu').close();$('importData').value='';$('impErr').textContent='';$('importDlg').showModal()};
@@ -1275,7 +1323,7 @@ $('mCopy').onclick=async()=>{
 };
 $('pasteBtn').onclick=async()=>{
  try{$('importData').value=await navigator.clipboard.readText();$('impErr').textContent=''}
- catch(e){$('impErr').textContent='Não consegui ler a área de transferência. Cole direto no campo.'}
+ catch(e){$('impErr').textContent='Não foi possível ler a área de transferência. Cole direto no campo.'}
 };
 $('icsBtn').onclick=async()=>{
  const t=tasks.find(x=>x.id===$('id').value);
@@ -1284,10 +1332,47 @@ $('icsBtn').onclick=async()=>{
  const r=await shareFile('taskflow-'+slug+'.ics','text/calendar',icsFor(t));
  if(r==='download')toast('Evento exportado. Abra o arquivo para adicionar ao calendário.');
 };
-$('mNotif').onclick=()=>{if('Notification' in window)Notification.requestPermission().then(()=>{updateNotifBtn();toast(Notification.permission==='granted'?'Notificações ativadas':'Permissão não concedida')})};
+$('mNotif').onclick=()=>{if('Notification' in window)Notification.requestPermission().then(()=>{updateNotifBtn();toast(Notification.permission==='granted'?'Notificações ativadas':'Permissão negada. Ative as notificações nas configurações do aparelho.')})};
 let installEvt=null;
 window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();installEvt=e;$('mInstall').hidden=false});
 $('mInstall').onclick=async()=>{if(!installEvt)return;$('menu').close();installEvt.prompt();await installEvt.userChoice;installEvt=null;$('mInstall').hidden=true};
+
+/* ---------- acessibilidade e acabamento (v3.1) ---------- */
+const srLive=$('srLive');
+const say=m=>{srLive.textContent='';setTimeout(()=>{srLive.textContent=m},30)};
+function orderedBodies(){return bodies.slice().sort((a,b)=>(a.tr-b.tr)||a.t.title.localeCompare(b.t.title,'pt-BR'))}
+function describeBody(b){const p=b.t;return p.title+', '+RING[b.k].n.toLowerCase()+(p.priority==='high'?', prioridade alta':p.priority==='low'?', prioridade baixa':'')+(p.repeat?', repete':'')}
+function kbGo(list,i){
+ const b=list[i];hover=b.id;cam.follow=null;cam.go={x:b.x,y:b.y};userMoved=true;
+ say(describeBody(b)+'. '+(i+1)+' de '+list.length+'. Enter abre.');
+}
+cv.addEventListener('keydown',e=>{
+ if(mode!=='map'||e.altKey||e.ctrlKey||e.metaKey)return;
+ const list=orderedBodies(),k=e.key,cur=hover?list.findIndex(b=>b.id===hover):-1;
+ let used=true;
+ if(k==='ArrowRight'||k==='ArrowDown'){if(list.length)kbGo(list,cur<0?0:(cur+1)%list.length);else say('Nenhuma tarefa pendente.')}
+ else if(k==='ArrowLeft'||k==='ArrowUp'){if(list.length)kbGo(list,cur<0?list.length-1:(cur-1+list.length)%list.length);else say('Nenhuma tarefa pendente.')}
+ else if(k==='Home'){if(list.length)kbGo(list,0)}
+ else if(k==='End'){if(list.length)kbGo(list,list.length-1)}
+ else if(k==='Enter'||k===' '){if(cur>=0)focusBody(list[cur]);else say('Use as setas para escolher uma tarefa.')}
+ else if(k==='+'||k==='='){zoomTo(cam.tz*1.25,W/2,H*cam.fy)}
+ else if(k==='-'||k==='_'){zoomTo(cam.tz/1.25,W/2,H*cam.fy)}
+ else if(k==='0'){$('homeBtn').click()}
+ else used=false;
+ if(used)e.preventDefault();
+});
+document.addEventListener('keydown',e=>{if(e.key==='Escape'&&sel&&!document.querySelector('dialog[open]'))closeBay()});
+function saveUi(){try{localStorage.setItem('taskflow_ui',JSON.stringify({view,stat,mode}))}catch(e){}}
+const calmLabel=()=>{$('mCalm').querySelector('small').textContent=calm?'Pausadas':'Ligadas'};
+calmLabel();
+$('mCalm').onclick=()=>{
+ calm=!calm;REDUCE=SYSRED||calm;
+ try{localStorage.setItem('taskflow_calm',calm?'1':'0')}catch(e){}
+ if(REDUCE)warp=0;
+ calmLabel();toast(calm?'Animações do fundo pausadas':'Animações do fundo ligadas');
+};
+let rzT=0;
+addEventListener('resize',()=>{clearTimeout(rzT);rzT=setTimeout(resize,150)});
 
 /* ---------- início ---------- */
 function greet(){
@@ -1296,7 +1381,13 @@ function greet(){
  const s=d.toLocaleDateString('pt-BR',{weekday:'long',day:'numeric',month:'long'});
  $('dateLine').textContent=s.charAt(0).toUpperCase()+s.slice(1);
 }
+let savedMode='map';
+try{const u=JSON.parse(localStorage.getItem('taskflow_ui')||'{}');if(['all','today','personal','work'].includes(u.view))view=u.view;if(['open','done','all'].includes(u.stat))stat=u.stat;if(u.mode==='list')savedMode='list'}catch(e){}
+document.querySelectorAll('[data-view]').forEach(b=>{const on=b.dataset.view===view;b.classList.toggle('on',on);b.setAttribute('aria-pressed',String(on))});
+document.querySelectorAll('[data-stat]').forEach(b=>{const on=b.dataset.stat===stat;b.classList.toggle('on',on);b.setAttribute('aria-pressed',String(on))});
 greet();render();resize();
+if(savedMode==='list')setMode('list');
+if(REDUCE){const i=$('intro');if(i)i.remove()}
 if(!REDUCE)cam.z=cam.tz*.3;
 checkReminders();updateNotifBtn();
 const isIOS=/iphone|ipad|ipod/i.test(navigator.userAgent)||(navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1);
@@ -1309,7 +1400,6 @@ setTimeout(()=>{
  try{seen=localStorage.getItem('taskflow_help')}catch(e){}
  if(!seen&&!document.querySelector('dialog[open]')){try{localStorage.setItem('taskflow_help','1')}catch(e){}$('helpDlg').showModal()}
 },3600);
-addEventListener('resize',resize);
 setInterval(()=>{checkReminders();renderNext();if(!document.hidden){rebuildCosmos()}},15000);
 document.addEventListener('visibilitychange',()=>{if(!document.hidden){greet();render();checkReminders()}});
 window.addEventListener('focus',checkReminders);
