@@ -37,5 +37,6 @@ Levantados do código em 2026-11-26 (`index.html`, v5.1.0). Atualize sempre que 
 - Linhas dobradas em 75 octetos UTF-8 (`icsFold`), como manda a RFC 5545.
 - Entrega: `navigator.share` com arquivo (folha de compartilhamento do iOS, onde aparece "Calendário"); sem suporte, baixa
   o arquivo. O envio é chamado sem `await` antes do compartilhamento, para não perder o gesto do toque no iOS.
+- Não verificado em iPhone: se reexportar a mesma tarefa atualiza o evento ou duplica; se a folha de compartilhamento oferece o Calendário.
 - Limite conhecido: concluir uma tarefa recorrente cria outra com id novo; reenviar ao calendário cria uma segunda série.
 

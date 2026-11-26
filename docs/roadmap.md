@@ -23,6 +23,8 @@ Histórico do que está implementado e estável. Nunca apagar; só acrescentar.
 ## Backlog
 - **Subir `index.html` e `sw.js` v5.1.0 ao `main`/GitHub Pages** (ver `docs/state.md`) e **testar no iPhone de verdade**
   o botão (folha de compartilhamento e tela "Adicionar" do Calendário).
+- Verificar no iPhone se reexportar atualiza os eventos ou cria duplicados (o envio em lote reexporta tudo a cada vez);
+  se duplicar, considerar `SEQUENCE`/`LAST-MODIFIED`.
 - Recorrentes: concluir cria tarefa com id novo e o reenvio ao calendário gera série duplicada; avaliar `UID` por série.
 - Decidir com o usuário o destino das cópias antigas `index_3.html` (v3.0.0), `icon_1.svg`, `icon-180_1.png`,
   `icon-192_1.png`, `icon-512_1.png` e `manifest_1.json` (nada as referencia).

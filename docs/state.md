@@ -20,4 +20,7 @@ Nenhuma. Entregue o botão "Enviar tarefas ao calendário" na v5.1.0, commitado 
 ## Próximo Passo
 Para o botão chegar ao iPhone: levar `index.html` e `sw.js` deste branch para o `main` (merge/PR) **ou** subir esses 2 arquivos
 pelo GitHub. Atenção: se o dono depois subir de novo um `index.html` local antigo, o botão some; a pasta local precisa receber
-o arquivo novo antes. O GitHub Pages é citado no prompt do v5, mas qual branch ele publica não foi verificado. Testar no iPhone.
+o arquivo novo antes. O GitHub Pages (https://joaogabrielll093-star.github.io/taskflow/) serve o `main`: em 2026-11-26 mostrava v5.0.0, build 500.
+Depois de publicar, o rodapé do menu deve mostrar "5.1.0 · build 510".
+Não verificado em iPhone: se a folha de compartilhamento oferece o Calendário direto; e se exportar duas vezes a mesma
+tarefa atualiza o evento ou duplica (o `UID` é estável, mas não há `SEQUENCE`). Testado apenas no Chromium.

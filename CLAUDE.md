@@ -8,7 +8,7 @@ Lema do manifesto: "Organize. Priorize. Realize."
 - Um único `index.html` (~2.500 linhas) com HTML, CSS e JavaScript inline, sem build e sem dependências; fontes locais em `fonts/`
 - Dados no `localStorage` do aparelho; service worker `sw.js` (cache `taskflow-510`, lista de arquivos pré-carregados)
 - IA opcional para ler frases: função externa em `AI_URL` (Cloudflare Worker), vazia por padrão
-- Publicação: o dono sobe arquivos inteiros pelo GitHub ("Add files via upload") e o app roda no GitHub Pages (ver `docs/state.md`)
+- Publicação: o dono sobe arquivos inteiros pelo GitHub ("Add files via upload"); o GitHub Pages em https://joaogabrielll093-star.github.io/taskflow/ serve o `main` (conferido em 2026-11-26: v5.0.0, build 500)
 
 ## Comandos
 - Servir local: `python3 -m http.server 8080` e abrir http://localhost:8080 (sem build)

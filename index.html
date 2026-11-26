@@ -2381,7 +2381,7 @@ $('mCal').onclick=async()=>{
  if(!n){toast('Nenhuma tarefa aberta com data para enviar.'+note,'OK',()=>{});return}
  const r=await shareFile('taskflow-tarefas-'+localDate()+'.ics','text/calendar',icsForAll(c.list));
  const what=n+(n>1?' tarefas':' tarefa');
- if(r==='shared')toast(what+' no arquivo. Escolha Calendário para adicionar.'+note,'OK',()=>{});
+ if(r==='shared')toast('Arquivo com '+what+' compartilhado. Se o Calendário não apareceu, salve em Arquivos e abra o .ics.'+note,'OK',()=>{});
  else if(r==='download')toast('Arquivo baixado com '+what+'. Abra-o para adicionar ao calendário.'+note,'OK',()=>{});
 };
 $('mCopy').onclick=async()=>{
