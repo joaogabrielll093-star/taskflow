@@ -1,5 +1,5 @@
 /**
- * Teste de ponta a ponta do botão "Enviar tarefas ao calendário" (navegador real).
+ * Teste de ponta a ponta do botão "Enviar tarefas ao calendário" (navegador real), na v5 do TaskFlow.
  * Requer Playwright e um servidor local:  python3 -m http.server 8790
  * Uso: node tests/calendar-export.e2e.cjs [http://localhost:8790/] [pasta-de-saída-dos-.ics]
  * Os .ics gerados são validados à parte por tests/validate_ics.py (biblioteca icalendar).
@@ -29,13 +29,16 @@ const TASKS = [
   { title: 'Data impossível', due: '2026-02-30' },
 ];
 
-// Como uma pessoa usaria: fecha a ajuda da primeira visita e dispensa avisos de lembrete que aparecem.
+// Como uma pessoa usaria: digita o nome na primeira visita, toca para pular a entrada,
+// fecha a ajuda da primeira visita e dispensa avisos de lembrete que aparecem.
 async function clearOverlays(page) {
-  for (let i = 0; i < 6; i++) {
-    if (await page.isVisible('#helpDlg[open]')) await page.evaluate(() => document.querySelector('#helpDlg').close());
+  for (let i = 0; i < 10; i++) {
+    if (await page.isVisible('#nameForm')) { await page.fill('#nameIn', 'Teste'); await page.click('#nameForm button[type="submit"]'); }
+    else if (await page.isVisible('#entry')) await page.click('#entry', { force: true });
+    else if (await page.isVisible('#helpDlg[open]')) await page.evaluate(() => document.querySelector('#helpDlg').close());
     else if (await page.isVisible('#alerts.show #aDismiss')) await page.click('#aDismiss');
     else break;
-    await page.waitForTimeout(150);
+    await page.waitForTimeout(500);
   }
 }
 async function seedThroughApp(page) {

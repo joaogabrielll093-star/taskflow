@@ -14,7 +14,7 @@
 <link rel="manifest" href="manifest.json">
 <link rel="icon" href="icon.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="icon-180.png">
-<title>TaskFlow v5.0.0</title>
+<title>TaskFlow v5.1.0</title>
 <style>
 @font-face{font-family:"Inter";src:url(fonts/inter.woff2) format("woff2");font-weight:100 900;font-style:normal;font-display:swap}
 @font-face{font-family:"Inter Tight";src:url(fonts/inter-tight.woff2) format("woff2");font-weight:100 900;font-style:normal;font-display:swap}
@@ -612,6 +612,7 @@ body.bayopen #toast{bottom:calc(min(64dvh,600px) + 12px)}
 <div class="mnote" id="iosHelp" hidden><b>Instalar no iPhone</b><ol><li>Abra este endereço no Safari.</li><li>Toque em Compartilhar.</li><li>Escolha Adicionar à Tela de Início.</li><li>Abra o TaskFlow pelo novo ícone.</li></ol>O app instalado guarda os dados separados do Safari. Se você já tem tarefas, copie o backup aqui e cole em Importar lá.</div>
 <div style="margin-top:8px">
 <button class="mrow" id="mImport">Importar tarefas<small>Colar backup</small></button>
+<button class="mrow" id="mCal">Enviar tarefas ao calendário<small>Abertas, com data</small></button>
 <button class="mrow" id="mExport">Exportar backup<small>Compartilhar</small></button>
 <button class="mrow" id="mCopy">Copiar backup<small>Área de transferência</small></button>
 <button class="mrow" id="mNotif" hidden>Ativar notificações</button>
@@ -621,7 +622,7 @@ body.bayopen #toast{bottom:calc(min(64dvh,600px) + 12px)}
 <button class="mrow" id="mHelp">Como usar o mapa</button>
 <button class="mrow" id="mCalm">Animações do fundo<small>Ligadas</small></button>
 </div>
-<div class="mfoot"><b>Organize. Priorize. Realize.</b>Suas tarefas ficam salvas neste aparelho. Faça um backup de vez em quando. Os lembretes tocam com o app aberto; para ser avisado com ele fechado, abra a tarefa, toque em Editar e use Adicionar ao calendário.<br><span translate="no">TaskFlow</span> 5.0.0 · build 500</div>
+<div class="mfoot"><b>Organize. Priorize. Realize.</b>Suas tarefas ficam salvas neste aparelho. Faça um backup de vez em quando. Os lembretes tocam com o app aberto; para ser avisado com ele fechado, use Enviar tarefas ao calendário aqui no menu ou abra a tarefa, toque em Editar e use Adicionar ao calendário.<br><span translate="no">TaskFlow</span> 5.1.0 · build 510</div>
 </div>
 </dialog>
 
@@ -970,7 +971,7 @@ $('quick').onsubmit=e=>{
 $('qMore').onclick=()=>{const p=aiTasks?aiTasks[0]:quickParse($('qtext').value,qPreset);$('qsheet').close();openForm(null,p)};
 
 /* ---------- backup e importação ---------- */
-function backupJson(){return JSON.stringify({app:'TaskFlow',version:'5.0.0',build:500,tasks},null,2)}
+function backupJson(){return JSON.stringify({app:'TaskFlow',version:'5.1.0',build:510,tasks},null,2)}
 async function shareFile(name,mime,content){
  const f=new File([content],name,{type:mime});
  if(navigator.canShare&&navigator.canShare({files:[f]})){
@@ -988,13 +989,27 @@ async function exportTasks(){
  if(r==='shared')toast('Backup compartilhado');
  else if(r==='download')toast('Backup exportado. Se nada aparecer, use Copiar backup.');
 }
-function icsFor(t){
- const esc=s=>String(s||'').replace(/\\/g,'\\\\').replace(/\r?\n/g,'\\n').replace(/,/g,'\\,').replace(/;/g,'\\;');
+const icsEsc=s=>String(s||'').replace(/\\/g,'\\\\').replace(/\r?\n/g,'\\n').replace(/,/g,'\\,').replace(/;/g,'\\;');
+/* RFC 5545: no máximo 75 octetos por linha; a continuação começa com um espaço. Dobra por caractere UTF-8, nunca no meio dele. */
+function icsFold(line){
+ const enc=new TextEncoder();
+ if(enc.encode(line).length<=75)return line;
+ const out=[];let cur='',len=0;
+ for(const ch of line){
+  const n=enc.encode(ch).length;
+  if(len+n>75){out.push(cur);cur=' '+ch;len=1+n}else{cur+=ch;len+=n}
+ }
+ out.push(cur);
+ return out.join('\r\n');
+}
+/* Um evento (lista de linhas) com alarme: no horário do lembrete, ou às 9h quando a tarefa não tem horário. */
+function icsEvent(t){
+ const esc=icsEsc;
  const ymd=x=>x.getFullYear()+pad(x.getMonth()+1)+pad(x.getDate());
  const ymdhm=x=>ymd(x)+'T'+pad(x.getHours())+pad(x.getMinutes())+'00';
  const stamp=new Date().toISOString().replace(/[-:]/g,'').replace(/\.\d{3}/,'');
  const day=new Date((t.due||localDate())+'T12:00:00');
- const L=['BEGIN:VCALENDAR','VERSION:2.0','PRODID:-//TaskFlow//PT-BR','CALSCALE:GREGORIAN','BEGIN:VEVENT','UID:'+t.id+'@taskflow','DTSTAMP:'+stamp,'SUMMARY:'+esc(t.title)];
+ const L=['BEGIN:VEVENT','UID:'+t.id+'@taskflow','DTSTAMP:'+stamp,'SUMMARY:'+esc(t.title)];
  if(t.description)L.push('DESCRIPTION:'+esc(t.description));
  if(t.reminder){
   const st=new Date((t.due||localDate())+'T'+t.reminder+':00'),en=new Date(st.getTime()+30*60000);
@@ -1004,8 +1019,31 @@ function icsFor(t){
   L.push('DTSTART;VALUE=DATE:'+ymd(day),'DTEND;VALUE=DATE:'+ymd(nx));
  }
  if(t.repeat)L.push('RRULE:FREQ='+{daily:'DAILY',weekly:'WEEKLY',monthly:'MONTHLY'}[t.repeat]);
- L.push('BEGIN:VALARM','ACTION:DISPLAY','DESCRIPTION:'+esc(t.title),t.reminder?'TRIGGER:PT0M':'TRIGGER:PT9H','END:VALARM','END:VEVENT','END:VCALENDAR');
- return L.join('\r\n');
+ L.push('BEGIN:VALARM','ACTION:DISPLAY','DESCRIPTION:'+esc(t.title),t.reminder?'TRIGGER:PT0M':'TRIGGER:PT9H','END:VALARM','END:VEVENT');
+ return L;
+}
+/* Um único VCALENDAR com N eventos. */
+function icsWrap(events){
+ const L=['BEGIN:VCALENDAR','VERSION:2.0','PRODID:-//TaskFlow//PT-BR','CALSCALE:GREGORIAN'];
+ events.forEach(e=>L.push(...e));
+ L.push('END:VCALENDAR');
+ return L.map(icsFold).join('\r\n');
+}
+function icsFor(t){return icsWrap([icsEvent(t)])}
+function icsForAll(list){return icsWrap(list.map(icsEvent))}
+/* Tarefas que entram no envio em lote: abertas, com data e horário válidos. Atrasadas ficam de fora, exceto as recorrentes (a repetição ainda gera avisos futuros). */
+function calendarTasks(){
+ const today=localDate(),r={list:[],noDate:0,late:0,bad:0};
+ const okDate=d=>/^\d{4}-\d{2}-\d{2}$/.test(d)&&localDate(new Date(d+'T12:00:00'))===d;
+ const okTime=v=>!v||/^([01]\d|2[0-3]):[0-5]\d$/.test(v);
+ for(const t of tasks){
+  if(t.done)continue;
+  if(!t.due){r.noDate++;continue}
+  if(!okDate(t.due)||!okTime(t.reminder)||!['','daily','weekly','monthly'].includes(t.repeat||'')){r.bad++;continue}
+  if(t.due<today&&!t.repeat){r.late++;continue}
+  r.list.push(t);
+ }
+ return r;
 }
 $('importForm').onsubmit=e=>{
  e.preventDefault();
@@ -2335,6 +2373,17 @@ document.querySelectorAll('[data-close]').forEach(b=>b.onclick=()=>b.closest('di
 $('menuBtn').onclick=()=>{updateNotifBtn();$('menu').showModal()};
 $('mImport').onclick=()=>{$('menu').close();$('importData').value='';$('impErr').textContent='';$('importDlg').showModal()};
 $('mExport').onclick=()=>{$('menu').close();exportTasks()};
+$('mCal').onclick=async()=>{
+ $('menu').close();
+ const c=calendarTasks(),n=c.list.length;
+ const skipped=[c.noDate&&c.noDate+' sem data',c.late&&c.late+(c.late>1?' atrasadas':' atrasada'),c.bad&&c.bad+' com data ou hora inválida'].filter(Boolean);
+ const note=skipped.length?' Ficaram de fora: '+skipped.join(', ')+'.':'';
+ if(!n){toast('Nenhuma tarefa aberta com data para enviar.'+note,'OK',()=>{});return}
+ const r=await shareFile('taskflow-tarefas-'+localDate()+'.ics','text/calendar',icsForAll(c.list));
+ const what=n+(n>1?' tarefas':' tarefa');
+ if(r==='shared')toast(what+' no arquivo. Escolha Calendário para adicionar.'+note,'OK',()=>{});
+ else if(r==='download')toast('Arquivo baixado com '+what+'. Abra-o para adicionar ao calendário.'+note,'OK',()=>{});
+};
 $('mCopy').onclick=async()=>{
  const json=backupJson();
  try{await navigator.clipboard.writeText(json)}

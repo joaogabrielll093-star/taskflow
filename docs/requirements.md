@@ -1,13 +1,13 @@
 # Requisitos e regras de negócio
 
-Levantados do código em 2026-11-25 (`index.html`, v3.0.0). Atualize sempre que um requisito mudar.
+Levantados do código em 2026-11-26 (`index.html`, v5.1.0). Atualize sempre que um requisito mudar.
 
 ## Tarefas
 - Tarefas com data de vencimento, prioridade, categoria/tag e subtarefas (`parseSubs()`).
 - Rótulos de data relativos: "Hoje", "Amanhã" (`dueLabel()`), com datas locais no formato AAAA-MM-DD.
 - Recorrência diária, semanal ou mensal (`REP`); concluir uma recorrente gera a próxima (`spawnNext()`,
   `nextDue()`).
-- Visões e filtros por estado (abertas/concluídas) e agrupamento por período (`bucket()`, `renderList()`).
+- Visões: mapa, lista clássica (`bucket()`, `renderList()`) e painel "Resumo"; filtros por estado e por categoria.
 
 ## Entrada rápida
 - Frase em linguagem natural interpretada localmente (`quickParse()`), com pré-visualização das tarefas.
@@ -19,12 +19,13 @@ Levantados do código em 2026-11-25 (`index.html`, v3.0.0). Atualize sempre que 
   registro do que já foi avisado (`taskflow_alerted`). Clique na notificação foca o app (`sw.js`).
 
 ## Dados
-- `localStorage`: `taskflow` (lista de tarefas), `taskflow_alerted`, `taskflow_snoozed`, `taskflow_help`
-  (ajuda já vista).
-- Backup e importação em JSON (`backupJson()`, importação normaliza categorias e campos), exportação
-  (`exportTasks()`), compartilhamento de arquivo (`shareFile()`) e calendário ICS (`icsFor()`).
+- `localStorage`: `taskflow` (lista de tarefas), `taskflow_alerted`, `taskflow_snoozed`, `taskflow_seen` (última visita),
+  `taskflow_help` (ajuda já vista), `taskflow_ui`, `taskflow_calm` (modo calmo), `taskflow_name` (nome na saudação).
+- Backup e importação em JSON (`backupJson()` inclui `app`, `version`, `build` e `tasks`; a importação normaliza categorias e
+  campos), exportação (`exportTasks()`), compartilhamento de arquivo (`shareFile()`) e calendário ICS (`icsFor()`).
+- Importação não valida `due` nem `reminder`: texto livre entra como está (por isso o envio ao calendário valida por tarefa).
 
-## Calendário (v3.1.0)
+## Calendário (v5.1.0)
 - Dois caminhos, ambos geram `.ics` com alarme (o alarme é do Calendário do aparelho e toca com o app fechado):
   - botão "Adicionar ao calendário" na tarefa (`icsFor`): um evento;
   - menu "Enviar tarefas ao calendário" (`icsForAll`): um único `VCALENDAR` com N eventos.

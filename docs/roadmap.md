@@ -10,16 +10,21 @@ Histórico do que está implementado e estável. Nunca apagar; só acrescentar.
 - **2026-11-26 · v3.1.0 — Enviar tarefas ao calendário**: botão no menu que gera um `.ics` com todas as tarefas abertas com
   data (eventos e alarmes), dobra de linhas da RFC 5545 e validação de data/hora por tarefa. Testes em `tests/` (e2e + validador
   `icalendar`). Testado só no Chromium; não em iPhone.
+- **2026-11-25/26 · v5.0.0** — o dono enviou ao `main` a versão 5 (mapa com buraco negro, "Resumo", tela de entrada,
+  fontes locais, cache `taskflow-500`); este branch passou a incluir essa base (merge de `origin/main`).
+- **2026-11-26 · v5.1.0 — Enviar tarefas ao calendário** (portado para a v5): botão no menu que gera um `.ics` com todas as
+  tarefas abertas com data (eventos e alarmes), dobra de linhas da RFC 5545 e validação de data/hora por tarefa. Substitui a
+  tentativa v3.1.0, feita antes sobre uma base desatualizada e que ficou só no histórico do branch. Testes em `tests/` (e2e +
+  validador `icalendar`). Testado só no Chromium; não em iPhone.
 
 ## Em andamento
 - Nada.
 
 ## Backlog
-- **Testar no iPhone de verdade** o botão do menu (folha de compartilhamento e tela "Adicionar" do Calendário).
-- Publicação: esta versão está só no branch `claude/atlas-invest-prompt-5jzy99`; o `main` não foi alterado e não foi
-  verificado onde o app é publicado.
+- **Subir `index.html` e `sw.js` v5.1.0 ao `main`/GitHub Pages** (ver `docs/state.md`) e **testar no iPhone de verdade**
+  o botão (folha de compartilhamento e tela "Adicionar" do Calendário).
 - Recorrentes: concluir cria tarefa com id novo e o reenvio ao calendário gera série duplicada; avaliar `UID` por série.
-- Decidir com o usuário o destino das cópias `index_3.html` (agora é a v3.0.0), `icon_1.svg`, `icon-180_1.png`,
+- Decidir com o usuário o destino das cópias antigas `index_3.html` (v3.0.0), `icon_1.svg`, `icon-180_1.png`,
   `icon-192_1.png`, `icon-512_1.png` e `manifest_1.json` (nada as referencia).
 - Branch `joaogabrielll093-star-patch-1` existe no remoto; conferir se ainda é necessário.
 - Testes automatizados para `quickParse()`, `nextDue()` e importação de backup.
