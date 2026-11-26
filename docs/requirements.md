@@ -23,3 +23,18 @@ Levantados do código em 2026-11-25 (`index.html`, v3.0.0). Atualize sempre que 
   (ajuda já vista).
 - Backup e importação em JSON (`backupJson()`, importação normaliza categorias e campos), exportação
   (`exportTasks()`), compartilhamento de arquivo (`shareFile()`) e calendário ICS (`icsFor()`).
+
+## Calendário (v3.1.0)
+- Dois caminhos, ambos geram `.ics` com alarme (o alarme é do Calendário do aparelho e toca com o app fechado):
+  - botão "Adicionar ao calendário" na tarefa (`icsFor`): um evento;
+  - menu "Enviar tarefas ao calendário" (`icsForAll`): um único `VCALENDAR` com N eventos.
+- Com horário de lembrete: evento de 30 min e alarme na hora (`TRIGGER:PT0M`). Sem horário: dia inteiro e alarme às 9h.
+  Recorrência diária/semanal/mensal vira `RRULE`. `UID` = `id@taskflow`.
+- Quais entram no envio em lote (`calendarTasks`): abertas, com data e horário válidos. Ficam de fora (e o aviso conta
+  quantas): sem data; atrasadas não recorrentes; data/hora inválida (ex.: importadas com texto livre). Atrasadas
+  recorrentes entram, porque a repetição ainda gera avisos futuros.
+- Linhas dobradas em 75 octetos UTF-8 (`icsFold`), como manda a RFC 5545.
+- Entrega: `navigator.share` com arquivo (folha de compartilhamento do iOS, onde aparece "Calendário"); sem suporte, baixa
+  o arquivo. O envio é chamado sem `await` antes do compartilhamento, para não perder o gesto do toque no iOS.
+- Limite conhecido: concluir uma tarefa recorrente cria outra com id novo; reenviar ao calendário cria uma segunda série.
+
