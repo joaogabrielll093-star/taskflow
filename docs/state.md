@@ -3,7 +3,7 @@
 **Última atualização:** 2026-11-26
 
 ## Task em Andamento
-Nenhuma. Entregue o botão "Enviar tarefas ao calendário" na v5.1.0, commitado no branch de trabalho (ainda não está no `main`).
+Nenhuma. Botão "Enviar tarefas ao calendário" (v5.1.0) publicado: `main` em `cd5d104` e GitHub Pages servindo build 510 (conferido em 2026-11-27).
 
 ## Arquivos Modificados
 - `index.html` - `icsFor` dividido em `icsEvent`/`icsWrap`/`icsFold`; novos `icsForAll`, `calendarTasks`, botão `#mCal` e
@@ -18,9 +18,6 @@ Nenhuma. Entregue o botão "Enviar tarefas ao calendário" na v5.1.0, commitado 
   (sem force) e o botão foi portado. Só `index.html` e `sw.js` mudaram em relação ao `main`.
 
 ## Próximo Passo
-Para o botão chegar ao iPhone: levar `index.html` e `sw.js` deste branch para o `main` (merge/PR) **ou** subir esses 2 arquivos
-pelo GitHub. Atenção: se o dono depois subir de novo um `index.html` local antigo, o botão some; a pasta local precisa receber
-o arquivo novo antes. O GitHub Pages (https://joaogabrielll093-star.github.io/taskflow/) serve o `main`: em 2026-11-26 mostrava v5.0.0, build 500.
-Depois de publicar, o rodapé do menu deve mostrar "5.1.0 · build 510".
-Não verificado em iPhone: se a folha de compartilhamento oferece o Calendário direto; e se exportar duas vezes a mesma
-tarefa atualiza o evento ou duplica (o `UID` é estável, mas não há `SEQUENCE`). Testado apenas no Chromium.
+O dono deve fechar e reabrir o app no iPhone e conferir "5.1.0 · build 510" no rodapé do menu. Pendente de teste no iPhone:
+se a folha de compartilhamento oferece o Calendário e se exportar duas vezes duplica os eventos (o `UID` é estável, sem
+`SEQUENCE`). Antes de qualquer novo upload de `index.html`, a pasta local do dono precisa ter a versão 5.1.0, senão o botão some.

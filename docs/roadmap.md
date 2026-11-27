@@ -16,13 +16,13 @@ Histórico do que está implementado e estável. Nunca apagar; só acrescentar.
   tarefas abertas com data (eventos e alarmes), dobra de linhas da RFC 5545 e validação de data/hora por tarefa. Substitui a
   tentativa v3.1.0, feita antes sobre uma base desatualizada e que ficou só no histórico do branch. Testes em `tests/` (e2e +
   validador `icalendar`). Testado só no Chromium; não em iPhone.
+- **2026-11-27 · v5.1.0 publicada**: `main` avançado para `cd5d104` (com autorização do dono) e GitHub Pages servindo build 510.
 
 ## Em andamento
 - Nada.
 
 ## Backlog
-- **Subir `index.html` e `sw.js` v5.1.0 ao `main`/GitHub Pages** (ver `docs/state.md`) e **testar no iPhone de verdade**
-  o botão (folha de compartilhamento e tela "Adicionar" do Calendário).
+- **Testar no iPhone de verdade** o botão (folha de compartilhamento e tela "Adicionar" do Calendário).
 - Verificar no iPhone se reexportar atualiza os eventos ou cria duplicados (o envio em lote reexporta tudo a cada vez);
   se duplicar, considerar `SEQUENCE`/`LAST-MODIFIED`.
 - Recorrentes: concluir cria tarefa com id novo e o reenvio ao calendário gera série duplicada; avaliar `UID` por série.
